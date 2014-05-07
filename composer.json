@@ -1,0 +1,16 @@
+{
+	"repositories": [
+        {
+            "type": "git",
+            "url": "https://github.com/RestaurantesLTV/CI_Users.git"
+        },
+        {
+            "type": "git",
+            "url": "https://github.com/RestaurantesLTV/CI_CustomAutoLoader.git"
+        }
+    ],
+    "require": {
+        "RestaurantesLTV/CI_CustomAutoLoader": "1.x-dev",
+        "RestaurantesLTV/CI_Users": "1.x.x"
+    }
+}
