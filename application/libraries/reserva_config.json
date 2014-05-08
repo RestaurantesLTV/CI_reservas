@@ -1,3 +1,4 @@
 {
-	"sistema" : "turnos"
+	"sistema" : "turnos",
+        "aforo" : "100"
 }

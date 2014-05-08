@@ -41,6 +41,7 @@
 $route['default_controller'] = "welcome";
 $route['404_override'] = '';
 $route['reservas'] = "reservas";
+$route['testing_reservas'] = 'TestingReservasManager';
 
 
 /* End of file routes.php */

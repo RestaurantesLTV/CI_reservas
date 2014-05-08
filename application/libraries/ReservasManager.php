@@ -1,8 +1,8 @@
 <?php
 
 /**
- * Description of ReservasManager
- *
+ * Administra el sistema de reservas. Tiene una agregacion respecto a un objecto de tipo
+ * 'Reserva'.
  * @author unscathed18
  */
 class ReservasManager {
@@ -43,13 +43,27 @@ class ReservasManager {
      * la clase 'Reserva' dependiendo de los parametros especificados en el archivo de configuracion.
      * @var String[]
      */
-    private $config = null;
+    protected $config = null;
+    private $tipo = "";
     
     public function __construct() {
         $this->CI =& get_instance();
         $this->fechaActual = new DateTime();
         $this->loadConfig();
-        $this->load->library('customautoloader');
+        if($this->checkConfigParams()){
+            throw new Exception("El archivo de configuracion '".$this->config_filename."' tiene valores erroneos.");
+        }
+        $this->CI->load->library('customautoloader');
+        
+        if($this->tipo == "turnos"){
+            $this->reserva = new ReservaPorTurnos();
+        }else{
+            $this->reserva = new ReservaPorTiempo();
+        }
+        
+        if(!$this->reserva){
+            throw new Exception('Clase "'.__CLASS__.'" no ha podido crear con exito el objeto "Reserva"');
+        }
     }
     
     
@@ -62,12 +76,51 @@ class ReservasManager {
     }
     
     private function loadConfig(){
-        if(!file_exists($this->config_filename)){
-            //throw new Exception('Clase "'.__CLASS__.'" --> Archivo de configuracion "'.$this->base_dir.'/'.$this->config_filename.'" no existe. ');
+        if(!file_exists(__DIR__."/".$this->config_filename)){
+            throw new Exception('Clase "'.__CLASS__.'" --> Archivo de configuracion "'.$this->base_dir.$this->config_filename.'" no existe. ');
             return;
         }
-        $json = file_get_contents($this->config_filename);
-        $this->config = json_decode($json);
+        
+        $json = file_get_contents(__DIR__."/".$this->config_filename);
+        $this->config = json_decode($json,true);
+    }
+    
+    /**
+     * Verifica que los parametros insertados en el fichero de configuracion
+     * sean correctos. En caso contrario, nos salta un error
+     * @return boolean Description
+     */
+    private function checkConfigParams(){
+        // PARAMETRO 'Sistema'. Opciones posibles: 'turnos' y 'tiempo'
+        $this->config['sistema'] = strtolower($this->config['sistema']);
+        $bSistema = false;
+        
+        if($this->config['sistema'] == "turnos"){
+            $bSistema = true;
+        }
+        
+        if($this->config['sistema'] == "tiempo"){
+            $bSistema = true;
+        }
+        
+        if(!$bSistema){
+            return false;
+        }
+        
+        /* Verificamos que existan los turnos */
+        
+        
+        
+        
+        // PARAMETRO 'AFORO'. Logica: Debe ser un numero mas grande que 1.
+        
+        if(!is_int($this->config['aforo'])) return false;
+        
+        if($this->config['aforo'] <=1){
+            return false;
+        }
+        
+        return true;
     }
     
     /**
@@ -76,6 +129,42 @@ class ReservasManager {
      */
     private function dumpConfigFileOptions(){
         
+    }
+    
+    private function loadTurnosFromDB(){
+        
+    }
+    
+    /**
+     * Devuelve 'true' si esta disponible acorde a ese 'momento' en concreto
+     * no es festivo, y quedan mesas disponibles.
+     * @return boolean
+     */
+    public function disponible(){
+        
+        return true;
+    }
+    
+    /**
+     * Asigna las mesas 
+     * @param int $numPersonas
+     * @return int[] Devuelve los numeros de las mesas asignadas
+     */
+    private function asignarMesas($numPersonas){
+        //return 
+    }
+    
+    
+    public function getReserva(){
+        return $this->reserva;
+    }
+    
+    public function nuevaReserva(){
+        if($this->tipo == turnos){
+            $this->reserva = new ReservaPorTurnos;
+        }else{
+            $this->reserva = new ReservaPorTiempo;
+        }
     }
     
     public function __toString() {
