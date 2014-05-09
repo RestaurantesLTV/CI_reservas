@@ -1,4 +1,13 @@
 {
 	"sistema" : "turnos",
-        "aforo" : "100"
+        "aforo" : "100",
+        "horario" : {
+            "lunes" : ["10", "20"],
+            "martes" : ["10", "20"],
+            "miercoles" : ["10", "20"],
+            "jueves" : ["10", "20"],
+            "viernes" : ["10", "20"],
+            "sabado" : ["17", "23"],
+            "domingo" : "null"
+        }
 }

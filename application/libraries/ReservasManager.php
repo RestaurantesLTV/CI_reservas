@@ -72,8 +72,30 @@ class ReservasManager {
      * @return boolean
      */
     private function esFestivo(){
+        
         return false; 
     }
+    
+    /**
+     * NO UTILIZAR
+     * @todo Buscar utilidad a esta funcion. Falta por implementar
+     * @return boolean
+     */
+    private function esLaborable(){
+        $dia_semana = $this->reserva->getDiaSemana();
+        if($this->config['horario'][$dia_semana] == null){
+            $festivo = false;
+              // Buscar en Base de datos si el dia en esta fecha es festivo  
+              // ...
+              // Acabamos de buscar en BD
+            if($festivo){
+                return true;
+            }
+            return false;
+        }
+        return true;
+    }
+    
     
     private function loadConfig(){
         if(!file_exists(__DIR__."/".$this->config_filename)){

@@ -26,7 +26,7 @@ class ReservaPorTurnos extends Reserva{
     public function loadTurnosFromDB(){
         $query = $this->CI->db->query("SELECT * FROM turno");
         foreach($query->result() as $row){
-            $this->turnos[$row->id] = $row->nombre;
+            $this->turnos[$row->id-1] = $row->nombre;
         }
     }
     
