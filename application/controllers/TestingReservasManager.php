@@ -27,5 +27,6 @@ class TestingReservasManager extends CI_Controller{
     private function testLoadTurnosFromDB(){
         // Make function public to test & return results.
         //$this->reservaPorTurnos = new ReservaPorTurnos;
+        
     }
 }

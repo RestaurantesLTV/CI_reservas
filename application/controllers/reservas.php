@@ -6,14 +6,35 @@
  * @author unscathed18
  */
 class Reservas extends CI_Controller {
+
+    private $reserva = null; // Por turnos
+
     public function __construct() {
         parent::__construct();
-        
+        error_reporting(E_ALL);
+        ini_set('display_errors', 1);
+        $this->load->library('form_validation');
+        $this->load->helper('form');
+        $this->customautoloader->load("ReservaPorTurnos");
+    }
+
+    public function index() {
+        $this->reserva = new ReservaPorTurnos(1);
+        //$this->load->view('front-end/reservas');
+        if ($this->form_validation->run() == FALSE) {
+            $this->load->view('front-end/reservas');
+        } else {
+            $this->load->view('front-end/formsuccess');
+        }
+    }
+
+    private function _requestIsFromProxy() {
+        //http://stackoverflow.com/questions/3003145/how-to-get-the-client-ip-address-in-php
+        // http://stackoverflow.com/questions/4527345/determine-if-user-is-using-proxy
     }
     
-    
-    
-    public function index(){
-        echo "bien";
+    public function getCalendar($day, $month, $year){
+        $mes = "";
     }
+
 }

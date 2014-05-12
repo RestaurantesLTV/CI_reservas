@@ -46,6 +46,10 @@ abstract class Reserva {
      */
     private $minuto;
     
+    private $email;
+    
+    private $telefono;
+    
     /**
      * Puntero al nucleo del sistema de Code Igniter
      * @var CI_ref
@@ -101,14 +105,32 @@ abstract class Reserva {
     
     /**
      * Hacer Override en clase hija
+     * @todo Documentar mejor para el equipo su cometido.
      * @param Object $momento Description
      */
     public function setMomento($momento){ }
     
     /**
      * Hacer Override en clase hija
+     * @todo Documentar mejor para el equipo su cometido.
      */
     public function getMomento(){ }
+    
+    /**
+     * Devuelve en format de fecha de MySQL
+     * @return String
+     */
+    public function getFecha(){
+        return $this->fecha->format("Y-m-d");
+    }
+    
+    /**
+     * Devuelve en format de hora y minutos de MySQL
+     * @return String
+     */
+    public function getTiempo(){
+        return $this->fecha->format("H:i");
+    }
     
     /**
      * 
@@ -178,5 +200,29 @@ abstract class Reserva {
                 break;
         }
         return $string_dia;
+    }
+    
+    public function getTelefono(){
+        return $this->telefono;
+    }
+    
+    public function getEmail(){
+        return $this->email;
+    }
+    
+    /**
+     * @todo Validar!
+     * @param String $tel
+     */
+    public function setTelefono($tel){
+        $this->telefono = $tel;
+    }
+    
+    /**
+     * @todo Validar!
+     * @param String $email
+     */
+    public function setEmail($email){
+        $this->email = $email;
     }
 }
