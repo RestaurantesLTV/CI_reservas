@@ -43,6 +43,8 @@ $route['404_override'] = '';
 $route['reservas'] = "reservas";
 $route['testing_reservas'] = 'TestingReservasManager';
 
+$route['calendar'] = 'reservasAsk';
+
 
 /* End of file routes.php */
 /* Location: ./application/config/routes.php */
