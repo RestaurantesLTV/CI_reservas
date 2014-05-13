@@ -19,13 +19,27 @@ class Reservas extends CI_Controller {
     }
 
     public function index() {
-        $this->reserva = new ReservaPorTurnos(1);
+        /*$this->reserva = new ReservaPorTurnos(1);
         //$this->load->view('front-end/reservas');
         if ($this->form_validation->run() == FALSE) {
             $this->load->view('front-end/reservas');
         } else {
             $this->load->view('front-end/formsuccess');
-        }
+        }*/
+        //$data = getConfigArray();
+        $this->_render("reservas");
+    }
+    
+    private function getConfigArray(){
+        $data = array();
+        $data[''];
+        return $data;
+    }
+    
+    private function _render($viewName){
+        $templates_dir = "front-end/templates/";
+        $this->load->view($templates_dir."header");
+        $this->load->view("front-end/".$viewName);
     }
 
     private function _requestIsFromProxy() {

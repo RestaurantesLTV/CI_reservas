@@ -12,30 +12,27 @@ class ReservasAsk extends CI_Controller {
     }
     
     public function index(){
-        if(!_POST){
+        if(!$_POST){
             die("POST NO EXISTE!");
         }
         $request = $this->input->post('request');
         
-        if(!$request || empty($request)){
-            die("Variable 'request' no especificada");
-        }
-        
-        $result = $this->processRequest($request);
-        
-        echo $result;
+        echo $this->_processRequest($request);
     }
     
     /**
      * @param string $request Dependiendo del valor, se atendera una request u otra.
      * @param array $params  Array que contiene todos los parametros.
      */
-    private function _processRequest($request, $params){
+    private function _processRequest($request){
         $result = "";
         switch($request){
             case "nuevo_mes":
                 $result = $this->_nuevo_mes();
                 break;
+            case "generate":
+                //$result = $this->_generate();
+                $result ="hey";
             default:
                 die("Variable 'request' tiene un valor incorrecto. No ha podido resolverse su peticion");
                 break;
@@ -47,5 +44,11 @@ class ReservasAsk extends CI_Controller {
         /*
          * $.post("calendar", {day : 3, month: 4, year: 8, turno: 2})
          */
+    }
+}
+
+class Date{
+    public function __construct(){
+        
     }
 }

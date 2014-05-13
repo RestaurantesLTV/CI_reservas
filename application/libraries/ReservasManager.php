@@ -238,9 +238,7 @@ class ReservasManager {
                 // Ejemplo de consulta: INSERT INTO reserva VALUES (null, "ASDADS", null, "2014-01-15", "07:13", 2, "192.168", 4, null, "93123229", "unscathed512@hotmail.com", 0)
                 $result = $this->CI->db->query("INSERT INTO reserva VALUES (null,'{$cod_reserva}',{$r->getFecha()},{$r->getHora()},{$r->getMomento()}, {$_SERVER['HTTP_X_FORWARDED_FOR']}, {$r->getNumPersonas()}, {$r->getDescripcion()}, {$r->getTelefono()}, {$r->getEmail()}, 0 ");
             }
-            //formatToDBDateFormat
         }
-        
         return false;
     }
 
