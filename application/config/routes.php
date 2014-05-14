@@ -40,10 +40,9 @@
 
 $route['default_controller'] = "welcome";
 $route['404_override'] = '';
-$route['reservas'] = "reservas";
+$route['reserva'] = "reserva_controller";
+$route['reserva/validar'] = "reserva_controller/validar";
 $route['testing_reservas'] = 'TestingReservasManager';
-
-$route['calendar'] = 'reservasAsk';
 
 
 /* End of file routes.php */

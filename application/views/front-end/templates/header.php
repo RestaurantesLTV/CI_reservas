@@ -5,10 +5,10 @@
         <meta charset="utf-8"/>
         <title></title>
             <!-- CSS -->
-            <link href="<?php echo base_url(); ?>assets/components/glDatePicker/styles/glDatePicker.default.css" rel="stylesheet" type="text/css">
-            <link href="<?php echo base_url(); ?>assets/css/calendar.css" rel="stylesheet" type="text/css"/>
+            <link rel="stylesheet" type="text/css" href="<?php echo base_url();?>assets/components/alertify.js/themes/alertify.core.css"/>
+            <link rel="stylesheet" type="text/css" href="<?php echo base_url();?>assets/components/alertify.js/themes/alertify.default.css"/>
+            
             <!-- JS -->
         <script src="<?php echo base_url(); ?>assets/js/lib/jquery.min.js"></script>
-        <script src="<?php echo base_url(); ?>assets/components/glDatePicker/glDatePicker.min.js"></script>
-        <script src="<?php echo base_url(); ?>assets/js/calendar.js"></script>
+        <script src="<?php echo base_url();?>assets/components/alertify.js/lib/alertify.min.js"></script>
     </head>
