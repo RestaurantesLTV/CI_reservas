@@ -56,14 +56,21 @@ class ReservasManager {
         $this->CI->load->library('customautoloader');
 
         if ($this->config['sistema'] == "turnos") {
-            $this->reserva = new ReservaPorTurnos();
-            loadTurnosFromDB();
+            //$this->reserva = new ReservaPorTurnos();
+            $this->loadTurnosFromDB();
         } else {
-            $this->reserva = new ReservaPorTiempo();
+            //$this->reserva = new ReservaPorTiempo();
         }
-
-        if (!$this->reserva) {
-            throw new Exception('Clase "' . __CLASS__ . '" no ha podido crear con exito el objeto "Reserva"');
+    }
+    
+    public function getTurnos(){
+        return $this->turnos;
+    }
+    
+    private function loadTurnosFromDB(){
+        $query = $this->CI->db->query("SELECT * from turno");
+        foreach($query->result() as $row){
+            $this->turnos[] = $row->nombre;
         }
     }
 

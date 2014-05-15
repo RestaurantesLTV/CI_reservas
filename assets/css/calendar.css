@@ -1,3 +1,11 @@
-#calendario{
+#fecha{
     width:300px;
+}
+#num_personas{
+    width:15px;
+    height:9px;
+}
+textarea{
+    width:350px;
+    resize:none;
 }

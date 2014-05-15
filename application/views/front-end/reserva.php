@@ -3,6 +3,7 @@
 
 <script src="<?php echo base_url(); ?>assets/components/glDatePicker/glDatePicker.min.js"></script>
 <script src="<?php echo base_url(); ?>assets/js/reserva_validar.js"></script>
+<script src="<?php echo base_url(); ?>assets/js/reserva_tooltips.js"></script>
 <body
     <!-- Formulario -->
     <?php
@@ -26,8 +27,7 @@
     $data = array(
         "name" => 'apellido',
         "id" => 'apellido',
-        "value" => "Collazo",
-        "placeholder" => "ejemplo@servidor.com"
+        "value" => "Collazo"
     );
     echo form_input($data) . "<br/>";
     /*     * ******************************************************************** */
@@ -41,15 +41,26 @@
         "placeholder" => "ejemplo@servidor.com"
     );
     echo form_input($data) . "<br/>";
-
+    
+    //Num personas
+    echo form_label("Reserva para ", "num_personas");
+    
+     $data = array(
+        "name" => 'num_personas',
+        "id" => 'num_personas',
+        "value" => "3",
+        "placeholder" => "",
+         "maxlength" => "2"
+    );
+    echo form_input($data)." personas"."<br/>";
 
     /*     * ******************************************************************** */
-    //Comentario
-    echo form_label("Mensaje: ", "comentario");
+    //Observaciones
+    echo form_label("Observaciones: ", "observaciones");
     echo form_textarea(
             array(
-                "name" => "comentario",
-                "id" => "comentario",
+                "name" => "observaciones",
+                "id" => "observaciones",
                 "value" => "Mi mnesjae!a010!",
                 "placeholder" => "Haznos llegar cualquier indicacion, o sugerencia "
                 . "que veas necesario para el dia de la reserva"
@@ -66,13 +77,53 @@
             )
     ) . "<br/>";
     
+    //Hora y tiempo
+    ?> 
+    <div>
+        Hora<select name="hora">
+            <option></option>
+            <?php 
+                for($i =0; $i <= 23; $i++){
+                    if($i<10){
+                        $valor = "0".$i;
+                    }else{$valor = $i; }
+                    echo "<option value='".$valor."'>".$valor."</option>"; 
+                }
+            ?>
+        </select>
+        :<select name="minuto">
+            <option></option>
+            <option value="00">00</option>
+            <?php
+                for($i = 10; $i <= 60; $i += 10){
+                    echo "<option value='".$i."'>".$i."</option>";
+                }
+            ?>
+        </select>
+        <span><small>*La hora es orientativa</small></span>
+    </div>
+    
+    <!-- Turno -->
+    Turno
+    <select>
+        <?php
+            $turnos = $this->reservasmanager->getTurnos();
+            echo "<option></option>";
+            foreach($turnos as $num => $turno){
+                echo "<option value='".$num."'>".ucfirst($turno)."</option>";
+            }
+        ?>
+    </select>
+    
+    <?php
     //Calendario #calendar
-    echo form_label("Calendario: ", "calendario");
+    echo form_label("Fecha: ", "fecha");
     echo form_input(
             array(
-                "name" => "calendario",
-                "id" => "calendario",
-                "value" => ""
+                "name" => "fecha",
+                "id" => "fecha",
+                "value" => "",
+                "readonly" => ""
             )
     ) . "<br/>";
     
@@ -82,7 +133,7 @@
         $(document).ready(function(){
             
         })
-    $('#calendario').glDatePicker(
+    $('#fecha').glDatePicker(
             {
                 // Style to use for the calendar.  This name must match the name used in
                 // the stylesheet, using the class naming convention "gldp-cssName".
@@ -224,7 +275,10 @@
 
     <?php
     //Final formulario
-    echo form_submit("reservar", "Reservar");
+    //echo form_submit("reservar", "Reservar");
+    ?>
+    <input id="submit_reservar" type="submit" value="Reservar"/>
+    <?php
     echo form_close();
     ?>
 </div>

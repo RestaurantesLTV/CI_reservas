@@ -33,6 +33,10 @@ class ReservaPorTurnos extends Reserva{
         
     }
     
+    public function getTurnos(){
+        return $this->turnos;
+    }
+    
     
     /**
      * @todo Hacer checkeo de comprobaciones de incoherencia.
