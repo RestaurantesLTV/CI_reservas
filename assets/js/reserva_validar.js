@@ -1,12 +1,4 @@
-$(document).ready(function() {
-    $("#fecha").on("propertychange change keyup paste input", function(){
-        console.log("ha cambiado");
-        if($("#fecha").text() != ""){
-            $("#submit_reservar").removeAttr("disabled");
-        }
-    });
-    
-    
+$(document).ready(function() {    
     $(function() {
         $('#frm').submit(function(e) {
 
@@ -22,15 +14,15 @@ $(document).ready(function() {
     });
 
     function HandleResponse(response) {
+        alertify.set({delay: 30000});
         console.log("Respuesta: " + response);
-        switch (response) {
-            case "exito":
-                alertify.set({delay: 10000});
-                alertify.success("<center>Enviado con &eacute;xito!<br/>Verifique su email para confirmar la reserva.</center>");
-                break;
-            default:
-                alertify.set({delay: 10000});
-                alertify.error(response);
+        
+        var patt = /&eacute;xito|exito/i;
+        
+        if(patt.test(response)){ // Exito
+            alertify.success("<center>" + response + "</center>");
+        }else{ // Algo ha ido mal
+            alertify.error("<center>" + response + "</center>");
         }
     }
 });

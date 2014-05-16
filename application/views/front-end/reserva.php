@@ -105,12 +105,12 @@
     
     <!-- Turno -->
     Turno
-    <select>
+    <select name="turno" id="turno">
         <?php
             $turnos = $this->reservasmanager->getTurnos();
             echo "<option></option>";
             foreach($turnos as $num => $turno){
-                echo "<option value='".$num."'>".ucfirst($turno)."</option>";
+                echo "<option value='".($num+1)."'>".ucfirst($turno)."</option>";
             }
         ?>
     </select>
@@ -146,7 +146,7 @@
                 calendarOffset: {x: 0, y: 1},
                 // Set to true if you want the calendar to be visible at all times.
                 // NOTE: If your target element is hidden, the calendar will be hidden as well.
-                showAlways: false,
+                showAlways: true,
                 // Hide the calendar when a date is selected (only if showAlways is set to false).
                 hideOnClick: false,
                 // Allow selection of months by clicking on the month in the title.

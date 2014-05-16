@@ -62,14 +62,23 @@ class ReservasManager {
             //$this->reserva = new ReservaPorTiempo();
         }
     }
-    
-    public function getTurnos(){
+
+    public function disponibilidadAforo() {
+        $queryString = "SELECT IFNULL(SUM(num_personas),0) as aforo FROM reserva "
+                . "WHERE fecha_reservada = '" . $this->reserva->getFecha() . "' AND id_turno = " . $this->reserva->getTurno();
+        $query = $this->CI->db->query($queryString);
+        $aforo_restante = $query->row()->aforo;
+        $aforo_restante = $this->config['aforo'] - $aforo_restante;
+        return $aforo_restante;
+    }
+
+    public function getTurnos() {
         return $this->turnos;
     }
-    
-    private function loadTurnosFromDB(){
+
+    private function loadTurnosFromDB() {
         $query = $this->CI->db->query("SELECT * from turno");
-        foreach($query->result() as $row){
+        foreach ($query->result() as $row) {
             $this->turnos[] = $row->nombre;
         }
     }
@@ -79,38 +88,13 @@ class ReservasManager {
      * @return boolean
      */
     private function esFestivo() {
-        if ($this->esLaborable()) {
-            $query = $this->CI->db->query("SELECT * FROM festividad WHERE fecha = ");
-            foreach ($query->result() as $row) {
-                $this->turnos[$row->id - 1] = $row->nombre;
-            }
-        }
+        /* if ($this->esLaborable()) {
+          $query = $this->CI->db->query("SELECT * FROM festividad WHERE fecha = ".$this->reserva->getFecha());
+          foreach ($query->result() as $row) {
+          $this->turnos[$row->id - 1] = $row->nombre;
+          }
+          } */
         return false;
-    }
-
-    /**
-     * Este metodo imita la "sobrecarga" de otros lenguajes. Dependiendo de si se
-     * introduce un argumento o 3 de ellos se ejecuta una subrutina u otra. 
-     * 
-     * - Version 1: Coge un objeto de tipo DateTime
-     * - Version 2: Coge 3 integers con la siguiente firma: dia, mes y anio.
-     * @param DateTime(version1)/dia(version2) $datetime
-     * @param int $mes
-     * @param int $year
-     * @return String Devuelve un String que puede interpretar la base de datos.
-     */
-    protected function formatToDBDateFormat($datetime, $mes = null, $year = null) {
-        if ($mes != null) { // Rutina: Version 2
-            if ($year != null) {
-                throw new Exception("Por implementar version 2 de esta funcion.");
-                if (!is_int($mes) || !is_int($year) || !is_int($datetime)) {
-                    throw new Exception("Los argumentos dados no son Integer!");
-                }
-            }
-        } else { // Rutina: Version 1
-            // Ejemplo de sintaxis MySQL de fecha: "2014-05-12"
-            return $datetime->format("Y-m-d");
-        }
     }
 
     /**
@@ -186,34 +170,8 @@ class ReservasManager {
      * Funcion creada para debugear la clase.
      * @todo Implementar la funcionalidad.
      */
-    private function dumpConfigFileOptions() {
+    public function dumpConfigFileOptions() {
         
-    }
-
-
-    private function momentoValido() {
-        $momento = $this->reserva->getMomento();
-
-        if (!is_int($momento)) {
-            throw new Exception("No es un integer.");
-        }
-
-        // Comparacion segun sistema de reserva.
-        if ($this->config['sistema'] == "turnos") {
-            foreach ($this->turnos as $turno_num => $turno) {
-                if ($turno_num == $momento) {
-                    return true;
-                }
-            }
-            return false;
-        } else {
-            if ($this->config['sistema'] == "tiempo") {
-                throw new Exception("Falta por implementar");
-                return true;
-            }
-        }
-
-        throw new Exception("Metodo " . __METHOD__ . " de la clase " . __CLASS__ . ", " . " debe saber el sistema que se escoge.");
     }
 
     /**
@@ -222,43 +180,59 @@ class ReservasManager {
      * @todo Acabar de completar
      * @return boolean
      */
-    public function disponible() {
+    private function disponible() {
+        $errores = "";
         if ($this->esFestivo()) {
-            return false;
+            $errores .= "Este dia y turno es festivo.";
         }
 
+        $aforo_disponible = $this->disponibilidadAforo();
+        $aforo_despues_de_reserva = $aforo_disponible - $this->reserva->getNumPersonas();
 
+        if ($aforo_despues_de_reserva < 0) { //Quedan espacios disponibles para hacer esta reserva
+            $errores .= "Aforo lleno. ";
+            if ($aforo_disponible > 0) {
+                $errores .= "Tan solo quedan " . $aforo_disponible . " huecos disponibles.";
+            }
+        }
 
-        return true;
+        return $errores;
     }
 
     /**
      * Si la reserva fue bien devuelve true, sino false.
      * @return boolean
      */
-    public function reservar(Reserva $r) {
-        if ($this->disponible()) {
-            //Reservamos si queda espacio
-            if ($this->aforoRestante() > $this->r->getNumPersonas()) {
-                $cod_reserva = $this->generarCodigoReserva();
-                $cod_encriptado = $this->encrypt->encode($msg);
-                // Ejemplo de consulta: INSERT INTO reserva VALUES (null, "ASDADS", null, "2014-01-15", "07:13", 2, "192.168", 4, null, "93123229", "unscathed512@hotmail.com", 0)
-                $result = $this->CI->db->query("INSERT INTO reserva VALUES (null,'{$cod_reserva}',{$r->getFecha()},{$r->getHora()},{$r->getMomento()}, {$_SERVER['HTTP_X_FORWARDED_FOR']}, {$r->getNumPersonas()}, {$r->getDescripcion()}, {$r->getTelefono()}, {$r->getEmail()}, 0 ");
-            }
+    public function reservar() {
+        $errores = "";
+        $errores .= $this->disponible();
+
+
+        $disponible;    
+
+        if ($errores == "") {
+            $disponible = true;
+        } else {
+            $disponible = false;
         }
-        return false;
+
+
+        if ($disponible) {
+            //Reservamos si queda espacio
+            $r = $this->reserva;
+            $cod_reserva = $this->generarCodigoReserva();
+            $cod_encriptado = $this->CI->encrypt->encode($cod_reserva);
+            // Ejemplo de consulta: INSERT INTO reserva VALUES (null, "ASDADS", null, "2014-01-15", "07:13", 2, "192.168", 4, null, "93123229", "unscathed512@hotmail.com", 0)
+            $result = $this->CI->db->query("INSERT INTO reserva VALUES (null,'{$cod_reserva}',null,{$r->getFecha()},{$r->getTiempo()}, {$r->getTurno()}, {$_SERVER['HTTP_X_FORWARDED_FOR']}, {$r->getObservaciones()}, {$r->getTelefono()}, {$r->getEmail()}, 0 ");
+            if ($result->num_rows() == 1) {
+                return true;
+            }
+            $errores .= "Fallo al reservar. Pongase en contacto con el administrador";
+            return $errores;
+        } else {
+            return $errores;
+        }
     }
-
-    /**
-     * Asigna las mesas 
-     * @param int $numPersonas
-     * @return int[] Devuelve los numeros de las mesas asignadas
-     */
-    /* private function asignarMesas($numPersonas){
-      //return
-      } */
-
-
 
     public function aforoRestante() {
         $query = $this->CI->db->query("SELECT sum(num_personas) as num_personas FROM reserva WHERE = " . $this->reserva->getFecha());
@@ -273,12 +247,8 @@ class ReservasManager {
         return $this->reserva;
     }
 
-    public function nuevaReserva() {
-        if ($this->tipo == turnos) {
-            $this->reserva = new ReservaPorTurnos;
-        } else {
-            $this->reserva = new ReservaPorTiempo;
-        }
+    public function nuevaReserva($r) {
+        $this->reserva = $r;
     }
 
     /*     * ***************************************************Mantenimiento************************************************** */

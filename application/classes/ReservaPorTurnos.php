@@ -18,19 +18,31 @@ class ReservaPorTurnos extends Reserva{
     private $turno = -1;
     private $turnos = array();
     
-    public function __construct($turno, $telefono = null, $email = null, 
-            $minuto = null, $fecha = null, $hora = null, 
-            $numPersonas = null, $descripcion = null){
+    public function __construct($turno, $telefono, $email, $fecha_hora, 
+            $numPersonas, $observaciones){
         parent::__construct();
-        $this->loadTurnosFromDB();
         
-        // Comenzamos a asignar valores:
-        if(!$this->validarTurno($turno)){
-            throw new Exception(__CLASS__."/".__METHOD__.": "."Turno insertado invalido");
-        }
         
-        //Validacion telefono
-        
+        /* Las variables estan limpias y con su formato gracias al trabajo
+         * ejercicido por el controlador de tratar de limpiarlas
+         * y establecer el formato adecuado.
+         */
+        $this->turno = $turno;
+        $this->telefono = $telefono;
+        $this->email = $email;
+        $this->fecha_hora = $fecha_hora;
+        $this->numPersonas = $numPersonas;
+        $this->observaciones = $observaciones;
+    }
+    
+    public function dumpObject(){
+        $value  = "<p>Turno: ".$this->turno."</p>";
+        $value .= "<p>Telefono: ".$this->telefono."</p>";
+        $value .= "<p>Email: ".$this->email."</p>";
+        $value .= "<p>Fecha: ".$this->fecha->format("Y-m-d H:i:s")."</p>";
+        $value .= "<p>Numero de personas: ".$this->numPersonas."</p>";
+        $value .= "<p>Observaciones: ".$this->observaciones."</p>";
+        return $value;
     }
     
     public function getTurnos(){
@@ -82,16 +94,5 @@ class ReservaPorTurnos extends Reserva{
         }
         
         return false;
-    }
-    
-    public function getMomento(){
-        return $this->getTurno();
-    }
-    
-    private function loadTurnosFromDB() {
-        $query = $this->CI->db->query("SELECT * FROM turno");
-        foreach ($query->result() as $row) {
-            $this->turnos[$row->id - 1] = $row->nombre;
-        }
     }
 }

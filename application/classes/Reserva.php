@@ -21,34 +21,23 @@ abstract class Reserva {
      * ejemplo, un formulario web.
      * @var String
      */
-    private $descripcion = null;
+    protected $observaciones = null;
     
     /**
      *
      * @var int Numero de personas
      */
-    private $numPersonas = 0;
+    protected $numPersonas = 0;
     
     /**
      * Fecha
      * @var DateTime
      */
-    private $fecha;
-    /**
-     * El formato de la hora es 24 horas. Rango [0-23]
-     * @var int
-     */
-    private $hora;
+    protected $fecha_hora;
     
-    /**
-     * El formato del minuto es 60. Rango [0-59]
-     * @var int
-     */
-    private $minuto;
+    protected $email;
     
-    private $email;
-    
-    private $telefono;
+    protected $telefono;
     
     /**
      * Puntero al nucleo del sistema de Code Igniter
@@ -61,98 +50,29 @@ abstract class Reserva {
         $this->CI =& get_instance();
     }
     
-    public function setMinuto($min){
-        if(!is_int($min)){
-            throw new Exception("El metodo '".__METHOD__."de la clase'".__CLASS__."' da error: El minuto no es un integer."
-                    ."Valor introducido --> ".$min);
-        }
-        
-        if($min < 0 || $min >= 60){
-            throw new Exception("El metodo '".__METHOD__."de la clase'".__CLASS__."' da error: El minuto no es valido."
-                    ."Valor introducido --> ".$min);
-        }
-        $this->minuto = $min;
-    }
-    
     /**
-     * 
-     * @return int
-     */
-    public function getMinuto(){
-        return $this->minuto;
-    }
-    
-    public function setHora($hora){
-        if(!is_int($hora)){
-            throw new Exception("El metodo '".__METHOD__."de la clase'".__CLASS__."' da error: La hora no es un integer."
-                    ."Valor introducido --> ".$hora);
-        }
-        
-        if($hora < 0 || $hora >= 24){
-            throw new Exception("El metodo '".__METHOD__."de la clase'".__CLASS__."' da error: La hora no es valida."
-                    ."Valor introducido --> ".$hora);
-        }
-        $this->hora = $hora;
-    }
-    
-    /**
-     * 
-     * @return int
-     */
-    public function getHora(){
-        return $this->hora;
-    }
-    
-    /**
-     * Hacer Override en clase hija
-     * @todo Documentar mejor para el equipo su cometido.
-     * @param Object $momento Description
-     */
-    public function setMomento($momento){ }
-    
-    /**
-     * Hacer Override en clase hija
-     * @todo Documentar mejor para el equipo su cometido.
-     */
-    public function getMomento(){ }
-    
-    /**
-     * Devuelve en format de fecha de MySQL
+     * Nos devuelve la fecha en el formato "Year-Month-Day"
      * @return String
      */
     public function getFecha(){
-        return $this->fecha->format("Y-m-d");
+        return $this->fecha_hora->format("Y-m-d");
     }
+
     
     /**
      * Devuelve en format de hora y minutos de MySQL
      * @return String
      */
     public function getTiempo(){
-        return $this->fecha->format("H:i");
-    }
-    
-    /**
-     * 
-     * @param type $numPersonas
-     */
-    public function setNumPersonas($numPersonas){
-        if($numPersonas <= 0){
-            throw new Exception("Numero de personas incorrecta --> ".$numPersonas);
-        }
-        $this->numPersonas = $numPersonas;
-    }
-    
-    public function setDescripcion($descripcion){
-        $this->descripcion = $descripcion;
+        return $this->fecha_hora->format("H:i:00");
     }
     
     public function getNumPersonas(){
-        return $this->numPersonas();
+        return $this->numPersonas;
     }
     
-    public function getDescripcion(){
-        return $this->descripcion;
+    public function getObservaciones(){
+        return $this->observaciones;
     }
     
     
@@ -209,20 +129,5 @@ abstract class Reserva {
     public function getEmail(){
         return $this->email;
     }
-    
-    /**
-     * @todo Validar!
-     * @param String $tel
-     */
-    public function setTelefono($tel){
-        $this->telefono = $tel;
-    }
-    
-    /**
-     * @todo Validar!
-     * @param String $email
-     */
-    public function setEmail($email){
-        $this->email = $email;
-    }
+
 }

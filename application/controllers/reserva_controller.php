@@ -35,25 +35,53 @@ class Reserva_Controller extends CI_Controller {
 
     public function validar() {
         
+        
         $this->form_validation->set_rules("nombre", "Nombre", "trim|required|alpha|max_length[40]");
         $this->form_validation->set_rules("apellido", "Apellido", "trim|required|alpha|max_length[40]");
         $this->form_validation->set_rules("telefono", "Telefono", "trim|required|numeric|is_natural");
         
         //Hora y tiempo
         $this->form_validation->set_rules("hora", "Hora", "trim|required|numeric|is_natural");
-        $this->form_validation->set_rules("minuto", "Minuto", "trim|required|numeric|is_natural");
-        $this->form_validation->set_rules("turno", "Turno", "trim|required|numeric|is_natural");
+        $this->form_validation->set_rules("minuto", "Minuto", "trim|required|is_natural");
+        $this->form_validation->set_rules("turno", "Turno", "trim|required|is_natural");
         
         //Otros
-        $this->form_validation->set_rules("observaciones", "Observaciones", "trim|required|max_length[600]");
+        $this->form_validation->set_rules("observaciones", "Observaciones", "trim|max_length[600]");
         $this->form_validation->set_rules("email", "Email", "trim|required|valid_email");
         $this->form_validation->set_rules("fecha", "Fecha", "trim|required|callback_fecha_check");
+        $this->form_validation->set_rules("num_personas", "N&uacute;mero de personas", "trim|required|is_natural_no_zero");
 
         if ($this->form_validation->run() === FALSE) {
             echo validation_errors();
         } else {
-            //$r = new ReservaPorTurnos();
-            echo "exito";
+            $exito = "<p>Enviado con &eacute;xito!</p>";
+            $hora = $this->input->post('hora').":".$this->input->post('minuto').":00";
+            $fecha_YMD =  explode(  "/" ,   $this->input->post('fecha') );
+            $fecha_YMD = $fecha_YMD[2]."/".$fecha_YMD[1]."/".$fecha_YMD[0];
+            
+            $hora_fecha = $fecha_YMD ." " . $hora;
+            $d = new DateTime($hora_fecha);
+            
+            $r = new ReservaPorTurnos($this->input->post('turno'), $this->input->post('telefono'), $this->input->post('email'), 
+                                      $d, $this->input->post('num_personas'), $this->input->post('observaciones'));
+            
+            $this->reservasmanager->nuevaReserva($r);
+            
+            // Se cumplen las condiciones para poder reservar?
+            $reservado = $this->reservasmanager->reservar();
+            
+            if($reservado != ""){
+                die($reservado);
+            }
+            
+            //Se puede reservar. Ahora hace falta comprobar si exceden de las 16 personas.
+            if($this->input->post('num_personas') > 16){
+                $exito .= "<p>El restaurante se pondra en contacto con usted en breve.</p>";
+            }else{
+                $exito .= "<p>Verifique su email para confirmar la reserva.</p>";
+            }
+            
+            echo $exito;
         }
     }
     

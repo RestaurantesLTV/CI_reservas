@@ -26,7 +26,7 @@ $(document).ready(function(){
     });
     $('#num_personas').qtip({ // Grab some elements to apply the tooltip to
         content: {
-            text: '<center>Si excede las 15 personas. El restaurante se pondr&aacute; en contacto con usted.</center>'
+            text: '<center>Si excede las 16 personas. El restaurante se pondr&aacute; en contacto con usted.</center>'
         }
     });
     $('#fecha').qtip({ // Grab some elements to apply the tooltip to
