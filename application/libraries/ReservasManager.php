@@ -187,7 +187,9 @@ class ReservasManager {
         }
 
         $aforo_disponible = $this->disponibilidadAforo();
+        //echo "<p>Disponbilidad aforo: ".$aforo_disponible."</p>";
         $aforo_despues_de_reserva = $aforo_disponible - $this->reserva->getNumPersonas();
+        //echo "<p>Aforo despues de reserva: ".$aforo_despues_de_reserva."</p>";
 
         if ($aforo_despues_de_reserva < 0) { //Quedan espacios disponibles para hacer esta reserva
             $errores .= "Aforo lleno. ";
@@ -198,6 +200,22 @@ class ReservasManager {
 
         return $errores;
     }
+    
+    public function getNombre(){
+        return $this->config['nombre'];
+    }
+    
+    public function getEmail(){
+        return $this->config['email'];
+    }
+    
+    public function getEmailUser(){
+        return $this->config['email-user'];
+    }
+    
+    public function getEmailPass(){
+        return $this->config['email-pass'];
+    }
 
     /**
      * Si la reserva fue bien devuelve true, sino false.
@@ -206,6 +224,8 @@ class ReservasManager {
     public function reservar() {
         $errores = "";
         $errores .= $this->disponible();
+        
+        
 
 
         $disponible;    
@@ -221,18 +241,31 @@ class ReservasManager {
             //Reservamos si queda espacio
             $r = $this->reserva;
             $cod_reserva = $this->generarCodigoReserva();
-            $cod_encriptado = $this->CI->encrypt->encode($cod_reserva);
+            $this->getReserva()->setCodigo($cod_reserva);
             // Ejemplo de consulta: INSERT INTO reserva VALUES (null, "ASDADS", null, "2014-01-15", "07:13", 2, "192.168", 4, null, "93123229", "unscathed512@hotmail.com", 0)
-            $result = $this->CI->db->query("INSERT INTO reserva VALUES (null,'{$cod_reserva}',null,{$r->getFecha()},{$r->getTiempo()}, {$r->getTurno()}, {$_SERVER['HTTP_X_FORWARDED_FOR']}, {$r->getObservaciones()}, {$r->getTelefono()}, {$r->getEmail()}, 0 ");
-            if ($result->num_rows() == 1) {
-                return true;
-            }
-            $errores .= "Fallo al reservar. Pongase en contacto con el administrador";
-            return $errores;
-        } else {
-            return $errores;
+            
+            /* BEG INSERTAR*/
+            $data = array(
+                'codigo' 		=> $cod_reserva,
+                'fecha_reservada'	=> $r->getFecha(),
+                'hora_reservada' 	=> $r->getTiempo(),
+                'id_turno' 		=> $r->getTurno(),
+                'ip'			=> $this->CI->input->ip_address(),
+                'observaciones'		=> $r->getObservaciones(),
+                'telefono'		=> $r->getTelefono(),
+                'email'			=> $r->getEmail(),
+                'verificado'		=> 0,
+                'num_personas'          => $r->getNumPersonas(),
+                'checked_by_admin'      => 0
+             );
+
+            $this->CI->db->insert('reserva', $data); 
+            /* END INSERTAR*/
         }
+            return $errores;
     }
+    
+    
 
     public function aforoRestante() {
         $query = $this->CI->db->query("SELECT sum(num_personas) as num_personas FROM reserva WHERE = " . $this->reserva->getFecha());

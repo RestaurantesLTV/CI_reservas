@@ -23,6 +23,8 @@ abstract class Reserva {
      */
     protected $observaciones = null;
     
+    protected $cod_reserva;
+    
     /**
      *
      * @var int Numero de personas
@@ -48,6 +50,15 @@ abstract class Reserva {
     
     public function __construct(){
         $this->CI =& get_instance();
+    }
+    
+    public function setCodigo($cod){
+        $this->cod_reserva = $cod;
+    }
+    
+    public function getCodigo(){
+        return $this->cod_reserva;
+        
     }
     
     /**

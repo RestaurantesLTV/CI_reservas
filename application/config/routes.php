@@ -43,6 +43,7 @@ $route['404_override'] = '';
 $route['reserva'] = "reserva_controller";
 $route['reserva/validar'] = "reserva_controller/validar";
 $route['testing_reservas'] = 'TestingReservasManager';
+$route['verificar'] = 'reserva_controller/verificarReserva';
 
 
 /* End of file routes.php */

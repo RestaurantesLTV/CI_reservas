@@ -1,7 +1,9 @@
-$(document).ready(function() {    
+$(document).ready(function() {
+    alertify.set({delay: 30000});
     $(function() {
+        
         $('#frm').submit(function(e) {
-
+            alertify.success("<center>" + "Peticion enviada, esperese un momento. " + "</center>");
             $.post($('#frm').attr('action'),
                     $('#frm').serialize(),
                     function(texto) {
@@ -11,10 +13,10 @@ $(document).ready(function() {
 
             return false;
         });
+        console.log("Enviado");
     });
 
     function HandleResponse(response) {
-        alertify.set({delay: 30000});
         console.log("Respuesta: " + response);
         
         var patt = /&eacute;xito|exito/i;

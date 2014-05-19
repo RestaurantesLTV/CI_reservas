@@ -33,18 +33,22 @@ class Reserva_Controller extends CI_Controller {
         // http://stackoverflow.com/questions/4527345/determine-if-user-is-using-proxy
     }
 
+    /* public function validar(){
+      echo "EXITO!";
+      } */
+
     public function validar() {
-        
-        
+
+
         $this->form_validation->set_rules("nombre", "Nombre", "trim|required|alpha|max_length[40]");
         $this->form_validation->set_rules("apellido", "Apellido", "trim|required|alpha|max_length[40]");
         $this->form_validation->set_rules("telefono", "Telefono", "trim|required|numeric|is_natural");
-        
+
         //Hora y tiempo
         $this->form_validation->set_rules("hora", "Hora", "trim|required|numeric|is_natural");
         $this->form_validation->set_rules("minuto", "Minuto", "trim|required|is_natural");
         $this->form_validation->set_rules("turno", "Turno", "trim|required|is_natural");
-        
+
         //Otros
         $this->form_validation->set_rules("observaciones", "Observaciones", "trim|max_length[600]");
         $this->form_validation->set_rules("email", "Email", "trim|required|valid_email");
@@ -54,45 +58,111 @@ class Reserva_Controller extends CI_Controller {
         if ($this->form_validation->run() === FALSE) {
             echo validation_errors();
         } else {
+            /* Adpatamos y verificamos el INPUT */
             $exito = "<p>Enviado con &eacute;xito!</p>";
-            $hora = $this->input->post('hora').":".$this->input->post('minuto').":00";
-            $fecha_YMD =  explode(  "/" ,   $this->input->post('fecha') );
-            $fecha_YMD = $fecha_YMD[2]."/".$fecha_YMD[1]."/".$fecha_YMD[0];
-            
-            $hora_fecha = $fecha_YMD ." " . $hora;
+            $hora = $this->input->post('hora') . ":" . $this->input->post('minuto') . ":00";
+            $fecha_YMD = explode("/", $this->input->post('fecha'));
+            $fecha_YMD = $fecha_YMD[2] . "/" . $fecha_YMD[1] . "/" . $fecha_YMD[0];
+
+            $hora_fecha = $fecha_YMD . " " . $hora;
             $d = new DateTime($hora_fecha);
-            
-            $r = new ReservaPorTurnos($this->input->post('turno'), $this->input->post('telefono'), $this->input->post('email'), 
-                                      $d, $this->input->post('num_personas'), $this->input->post('observaciones'));
-            
+
+            $r = new ReservaPorTurnos($this->input->post('turno'), $this->input->post('telefono'), $this->input->post('email'), $d, $this->input->post('num_personas'), $this->input->post('observaciones'));
+
             $this->reservasmanager->nuevaReserva($r);
-            
-            // Se cumplen las condiciones para poder reservar?
+
+            // Reservamos (Dentro del metodo verificamos si esta o no disponible la reserva)
             $reservado = $this->reservasmanager->reservar();
-            
-            if($reservado != ""){
+
+            if ($reservado != "") {
                 die($reservado);
             }
-            
+
             //Se puede reservar. Ahora hace falta comprobar si exceden de las 16 personas.
-            if($this->input->post('num_personas') > 16){
+            if ($this->input->post('num_personas') > 16) {
+                //$cod_encriptado = $this->encrypt->encode($this->reservasmanager->getReserva()->getCodigo());
+                $subject = $this->input->post("nombre") . " " . $this->input->post("apellido") . ", usted esta a un paso mas de confirmar su reserva.";
+                $this->_enviarEmail($subject, $this->input->post('email'), $this->reservasmanager->getReserva()->getCodigo());
                 $exito .= "<p>El restaurante se pondra en contacto con usted en breve.</p>";
-            }else{
+            } else {
                 $exito .= "<p>Verifique su email para confirmar la reserva.</p>";
             }
-            
+
             echo $exito;
         }
     }
-    
-    function fecha_check($str){
+
+    private function _enviarEmail($subject, $email, $cod_reserva) {
+        error_reporting(E_ALL);
+        ini_set('display_errors', 1);
+
+        $config = Array(
+            'protocol' => 'smtp',
+            'smtp_host' => 'ssl://smtp.googlemail.com',
+            'smtp_port' => 465,
+            'smtp_user' => $this->reservasmanager->getEmailUser(),
+            'smtp_pass' => $this->reservasmanager->getEmailPass(),
+            'mailtype' => 'html',
+            'charset' => 'iso-8859-1'
+        );
+        $this->load->library('email', $config);
+        $this->email->set_newline("\r\n");
+
+
+
+
+        /*         * **************************************************************** */
+
+        $this->email->from($this->reservasmanager->getEmailUser(), $this->reservasmanager->getNombre());
+        $this->email->to($email);
+
+        $mensaje = 'Su reserva ha ido bien! Vaya al siguiente link para confirmarla:';
+        $mensaje .= "<a>" . site_url("verificar?email=") . $email . "&cod_reserva=" . $cod_reserva . "</a>";
+
+        $this->email->subject($subject);
+        $this->email->message($mensaje);
+
+        $this->email->send();
+
+        //echo $this->email->print_debugger();
+        
+    }
+
+    public function verificarReserva() {
+        $cod_reserva = $this->input->get('cod_reserva');
+        $email = $this->input->get('email');
+        
+        //echo "<p>cod_encriptado:". $cod_encriptado."</p>";
+
+        //$cod_reserva = $this->encrypt->decode($cod_encriptado);
+        echo "<p>Decodificado: ".$cod_reserva."</p>";
+
+        $data = array(
+            'verificado' => 1,
+        );
+
+        //codigo, email
+
+        $this->db->where('codigo', $cod_reserva);
+        $this->db->where('email', $email);
+        $this->db->update('reserva', $data);
+
+        $affected_rows = $this->db->affected_rows();
+        
+        if ($affected_rows == 0) {
+            die("Codigo invalido :( ");
+        }
+        echo "Verificado con &eacute;xito! Su reserva ya esta comprobada.";
+    }
+
+    function fecha_check($str) {
         $fecha = explode("/", $str);
-        if(count($fecha) == 3){
-                            //Mes       //Dia       //Year
-            if(!checkdate ($fecha[1] , $fecha[0] , $fecha[2] )){  
-               $this->form_validation->set_message('fecha_check', 'Debe ser una fecha valida dentro del rango! Erroneo: %s');
-               return FALSE;
-            }else{
+        if (count($fecha) == 3) {
+            //Mes       //Dia       //Year
+            if (!checkdate($fecha[1], $fecha[0], $fecha[2])) {
+                $this->form_validation->set_message('fecha_check', 'Debe ser una fecha valida dentro del rango! Erroneo: %s');
+                return FALSE;
+            } else {
                 return TRUE;
             }
         }

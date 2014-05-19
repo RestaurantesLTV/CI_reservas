@@ -1,6 +1,9 @@
 {
+        "nombre" : "Douzo",
 	"sistema" : "turnos",
         "aforo" : "100",
+        "email-user" : "aichitakahashi@gmail.com",
+        "email-pass" : "douzobrossa",
         "horario" : {
             "lunes" : ["10", "20"],
             "martes" : ["10", "20"],
