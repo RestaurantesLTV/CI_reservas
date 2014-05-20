@@ -6,7 +6,7 @@
  * @author unscathed18
  */
 class Reserva_Controller extends CI_Controller {
-
+//http://davidwalsh.name/gmail-php-imap
     private $reserva = null; // Por turnos
 
     public function __construct() {
@@ -80,11 +80,12 @@ class Reserva_Controller extends CI_Controller {
 
             //Se puede reservar. Ahora hace falta comprobar si exceden de las 16 personas.
             if ($this->input->post('num_personas') > 16) {
-                //$cod_encriptado = $this->encrypt->encode($this->reservasmanager->getReserva()->getCodigo());
-                $subject = $this->input->post("nombre") . " " . $this->input->post("apellido") . ", usted esta a un paso mas de confirmar su reserva.";
-                $this->_enviarEmail($subject, $this->input->post('email'), $this->reservasmanager->getReserva()->getCodigo());
-                $exito .= "<p>El restaurante se pondra en contacto con usted en breve.</p>";
+                $exito .= "<p>El restaurante se pondra en contacto con usted en breve para confirmar su reserva.</p>";
             } else {
+                $subject = $this->input->post("nombre") . " " . $this->input->post("apellido") . ", usted esta a un paso mas de confirmar su reserva.";
+                $id = $reserva_id = $this->reservasmanager->getReserva()->getID();
+                $this->_enviarEmail($subject, $id ,$this->input->post('email'), $this->reservasmanager->getReserva()->getCodigo());
+                
                 $exito .= "<p>Verifique su email para confirmar la reserva.</p>";
             }
 
@@ -92,7 +93,7 @@ class Reserva_Controller extends CI_Controller {
         }
     }
 
-    private function _enviarEmail($subject, $email, $cod_reserva) {
+    private function _enviarEmail($subject, $id_row, $email, $cod_reserva) {
         error_reporting(E_ALL);
         ini_set('display_errors', 1);
 
@@ -115,27 +116,33 @@ class Reserva_Controller extends CI_Controller {
 
         $this->email->from($this->reservasmanager->getEmailUser(), $this->reservasmanager->getNombre());
         $this->email->to($email);
-
-        $mensaje = 'Su reserva ha ido bien! Vaya al siguiente link para confirmarla:';
-        $mensaje .= "<a>" . site_url("verificar?email=") . $email . "&cod_reserva=" . $cod_reserva . "</a>";
+        
+        $url_comprobacion = site_url("verificar?id=").$id_row ."&email=". $email . "&cod_reserva=" . $cod_reserva;
+        $mensaje = '<p>Su reserva ha ido bien! Vaya al siguiente link para confirmarla:</p>';
+        $mensaje .= "<p><a href='{$url_comprobacion}'>" . $url_comprobacion . "</a></p>";
 
         $this->email->subject($subject);
         $this->email->message($mensaje);
 
         $this->email->send();
+        
+        echo "Verifique su email para confirmar la reserva";
 
         //echo $this->email->print_debugger();
         
     }
 
+    /**
+     * Verifica el email recibido por el usuario para confirmar
+     * finalmente la reserva hecha. El email enviado tiene un link con
+     * con parametros GET del ID de la base de datos de la reserva, el codigo,
+     * y el email del reservante.
+     */
     public function verificarReserva() {
         $cod_reserva = $this->input->get('cod_reserva');
         $email = $this->input->get('email');
+        $id = $this->input->get('id');
         
-        //echo "<p>cod_encriptado:". $cod_encriptado."</p>";
-
-        //$cod_reserva = $this->encrypt->decode($cod_encriptado);
-        echo "<p>Decodificado: ".$cod_reserva."</p>";
 
         $data = array(
             'verificado' => 1,
@@ -145,6 +152,7 @@ class Reserva_Controller extends CI_Controller {
 
         $this->db->where('codigo', $cod_reserva);
         $this->db->where('email', $email);
+        $this->db->where('id', $id);
         $this->db->update('reserva', $data);
 
         $affected_rows = $this->db->affected_rows();
@@ -152,7 +160,7 @@ class Reserva_Controller extends CI_Controller {
         if ($affected_rows == 0) {
             die("Codigo invalido :( ");
         }
-        echo "Verificado con &eacute;xito! Su reserva ya esta comprobada.";
+        echo "Verificado con &eacute;xito! Su reserva ya esta hecha por completo.";
     }
 
     function fecha_check($str) {

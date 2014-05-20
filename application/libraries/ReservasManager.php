@@ -260,6 +260,10 @@ class ReservasManager {
              );
 
             $this->CI->db->insert('reserva', $data); 
+            $insert_id = $this->CI->db->insert_id();
+            $this->CI->db->trans_complete();
+            
+            $this->reserva->setID($insert_id);
             /* END INSERTAR*/
         }
             return $errores;

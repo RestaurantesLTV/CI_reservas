@@ -1,0 +1,13 @@
+/* FONTS */
+@import url(http://fonts.googleapis.com/css?family=Open+Sans); /* font-family: 'Open Sans', sans-serif; */
+
+
+/* CSS */
+.reserva{
+    font-family: 'Open Sans', sans-serif;
+    
+    font-size: 0.8em;
+    padding:15px;
+    
+}
+

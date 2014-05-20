@@ -25,6 +25,8 @@ abstract class Reserva {
     
     protected $cod_reserva;
     
+    protected $id = -1;
+    
     /**
      *
      * @var int Numero de personas
@@ -50,6 +52,14 @@ abstract class Reserva {
     
     public function __construct(){
         $this->CI =& get_instance();
+    }
+    
+    public function setID($id){
+        $this->id = $id;
+    }
+    
+    public function getID(){
+        return $this->id;
     }
     
     public function setCodigo($cod){
