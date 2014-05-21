@@ -1,0 +1,113 @@
+/* AZUL: 428bca */ /* GREY */
+@import url(http://fonts.googleapis.com/css?family=Roboto:400,300italic);
+@import url(http://fonts.googleapis.com/css?family=PT+Serif);
+
+/* Forzar line-break en una celda: http://stackoverflow.com/questions/6843412/force-line-break-in-html-table-cell */
+
+
+::selection{
+	background-color:#3399FF;
+}
+
+.reserva-backend{
+	width:60%;
+	border:1px solid black;
+	font-family: 'PT Serif', serif;
+}
+
+.reserva-backend table{
+    border-collapse: collapse;
+    table-layout: fixed;
+    width: 100%;
+}
+
+.reserva-backend table tr{
+	padding-top: .5em;
+    padding-bottom: .5em;
+/*    height:30px;*/
+    border: 1px solid gray;
+}
+
+.reserva-backend table td{
+	border: 1px solid gray;
+    margin-bottom:3px;
+    padding: 6px;
+    /*max-width:200px;*/
+    text-align:center;
+    width:50px;
+
+    /* Word wrap and line-break*/
+    word-wrap: break-word;         /* All browsers since IE 5.5+ */
+    overflow-wrap: break-word;     /* Renamed property in CSS3 draft spec */
+}
+
+
+.reserva-backend table tr:nth-child(even){
+	background-color:#E6E6E6;
+}
+
+.reserva-backend table tr:nth-child(odd){
+	background-color:#CFCFCF; /*#B8B8B8*/
+}
+
+/* ESTA TIENE QUE SITUARSE AQUI DEBAJO. Sino, 'even' le hace un override a este propiedad */
+.reserva-backend table tr:nth-child(1){
+	background: #6db3f2; /* Old browsers */
+	background: -moz-linear-gradient(top, #6db3f2 0%, #54a3ee 50%, #3690f0 51%, #1e69de 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#6db3f2), color-stop(50%,#54a3ee), color-stop(51%,#3690f0), color-stop(100%,#1e69de)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top, #6db3f2 0%,#54a3ee 50%,#3690f0 51%,#1e69de 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top, #6db3f2 0%,#54a3ee 50%,#3690f0 51%,#1e69de 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top, #6db3f2 0%,#54a3ee 50%,#3690f0 51%,#1e69de 100%); /* IE10+ */
+	background: linear-gradient(to bottom, #6db3f2 0%,#54a3ee 50%,#3690f0 51%,#1e69de 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#6db3f2', endColorstr='#1e69de',GradientType=0 ); /* IE6-9 */
+}
+
+.reserva-backend table tr.nav td{ 
+	font-family: 'Roboto', sans-serif;
+	font-weight: lighter;
+	color:white;
+}
+.reserva-backend table tr:hover{ 
+	background-color:#F8F8F8;
+	cursor:help;
+}
+
+.reserva-backend input[type='checkbox']{
+	display:none;
+	background:url('checkbox.png');
+	cursor:pointer;
+}
+
+input[type="checkbox"] + label {
+    display:inline-block;
+    width:19px;
+    height:19px;
+    margin:-1px 4px 0 0;
+    vertical-align:middle;
+    background:url(assets/img/checkbox.png) left top no-repeat;
+    cursor:pointer;
+}
+
+.reserva-backend input[type='checkbox']:checked{
+	background:url(checkbox_checked.png) -19px top no-repeat;
+}
+
+input[type="checkbox"]:checked + label {
+    background:url(checkbox_checked.png) left top no-repeat;
+
+}
+
+.reserva-modal{
+	padding:1%;
+	background: url('bg.jpg') no-repeat;
+	/*border-radius: 30px;*/
+	border-width: 10px;
+	font-family: 'PT Serif', serif;
+	border-image:url(cover.jpg) 30 30 round;
+	color:white;
+  
+}
+/* http://webdesign.tutsplus.com/tutorials/quick-tip-easy-css3-checkboxes-and-radio-buttons--webdesign-8953 */
+
+/* ACORDION */
+

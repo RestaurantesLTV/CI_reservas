@@ -44,6 +44,9 @@ $route['reserva'] = "reserva_controller";
 $route['reserva/validar'] = "reserva_controller/validar";
 $route['testing_reservas'] = 'TestingReservasManager';
 $route['verificar'] = 'reserva_controller/verificarReserva';
+$route['backend/reserva'] = 'be_reservas_controller';
+$route['backend/reserva/proximasreservas'] = 'be_reservas_controller/ajaxProximasReservas';
+
 
 
 /* End of file routes.php */

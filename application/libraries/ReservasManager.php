@@ -6,6 +6,8 @@
  * @author unscathed18
  */
 class ReservasManager {
+    
+    private $modelInitialized = false;
 
     /**
      * Directorio base donde esta ubicado el archivo de configuracion.
@@ -323,6 +325,13 @@ class ReservasManager {
 
     public function __toString() {
         return "[Objeto] Sistema de reservas";
+    }
+    
+    public function getModel(){
+        if(!$this->modelInitialized){
+            $this->CI->load->model("be_reservas_model");
+        }
+        return $this->CI->be_reservas_model;
     }
 
 }
